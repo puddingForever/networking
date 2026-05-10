@@ -4,6 +4,7 @@ const http = require("node:http");
 // tells request that tcp should be keepAlive
 const agent = http.Agent({ keepAlive: true });
 
+// creating request object
 const request = http.request({
   agent: agent,
   hostname: "localhost",
@@ -13,18 +14,30 @@ const request = http.request({
   headers: {
     "content-type": "application/json",
     // we can also specifiy content length , if it is not specified , data will be sent in chunks
+    name: "jieun", // who is sesnding, in production i t should be a session
   },
 });
 
-// emitted only once
-request.on("response", () => {});
-
-request.write(JSON.stringify({ message: "TODAY I FEEL SUCKS" }));
-request.write(JSON.stringify({ message: "WHY I MET A BF LIKE HIM?" }));
-request.write(
-  JSON.stringify({ message: "I FEEL LIKE I HATE HIM HE IS SUCH A FAILURE" }),
-);
-
+// sending request by chunks
+// reqquest.write()
 request.end(
-  JSON.stringify({ message: "THOUGH I FEEL NOT GOOD TO WRITE ABOUT IT" }),
+  JSON.stringify({ title: "this is the title", body: "studying http server" }),
 );
+
+// emitted only once
+request.on("response", (response) => {
+  console.log("-----STATUS-------");
+  console.log(response.statusCode);
+
+  console.log("-----HEADERS-------");
+  console.log(response.headers);
+
+  // body data is sented through stream
+  response.on("data", (chunk) => {
+    console.log(chunk.toString("utf-8"));
+  });
+
+  response.on("end", () => {
+    console.log("req && res ended");
+  });
+});

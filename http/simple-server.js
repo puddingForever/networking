@@ -12,9 +12,26 @@ server.on("request", (req, res) => {
   console.log(req.headers);
   console.log("-----body-------");
 
+  let name = req.headers.name;
+  let data = "";
+
   // server gets body in streams
   req.on("data", (chunk) => {
-    console.log(chunk.toString("utf-8"));
+    data += chunk.toString();
+  });
+
+  req.on("end", () => {
+    data = JSON.parse(data);
+
+    // response
+    res.writeHead(200, { "Content-Type": "application/json" });
+    // when communicating on http
+    // server cant ready js object, so we convert it to string (json)
+    res.end(
+      JSON.stringify({
+        message: `server got ${JSON.stringify(data)} created by ${name}`,
+      }),
+    );
   });
 });
 
