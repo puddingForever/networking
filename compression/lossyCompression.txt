@@ -1,4 +1,5 @@
+lossy compression used by 
 usually multipart data
+
 JPEG, MP3 -> lossy (losing quality)
 PNG -> Lossless 
-
